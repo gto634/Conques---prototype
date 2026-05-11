@@ -19,15 +19,12 @@ public class CameraPlayer : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.W))
         {
-            currentPosition = 1;
-            Debug.Log("up");
+            if (currentPosition < transforms.Count - 1) currentPosition += 1;
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
-            currentPosition = 0;
-            Debug.Log("down");
+            if (currentPosition > 0 ) currentPosition -= 1;
         }
         this.transform.SetPositionAndRotation(transforms[currentPosition].position, transforms[currentPosition].rotation);
-        Debug.Log(transforms[currentPosition].position);
     }
 }
