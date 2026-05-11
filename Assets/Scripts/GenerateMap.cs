@@ -11,13 +11,25 @@ public class GenerateMap : MonoBehaviour
 
     void Start()
     {
-        for (int i = 0; i < 5; i++)
+        float realOffsetZ = 0;
+
+        for (int i = 0; i < 15; i++)
         {
-            for (int j = 0; j < 5; j++)
+            if(i % 2 == 0)
+            {
+                realOffsetZ = offsetZ;
+            }
+            else
+            {
+                realOffsetZ = 0f;
+            }
+
+            for (int j = 0; j < 15; j++)
             {
                 int randomIndex = Random.Range(0, tilePrefab.Count);
-                GameObject tile = Instantiate(tilePrefab[randomIndex], new Vector3(i + offsetX, 0, j + offsetZ), Quaternion.identity);
+                GameObject tile = Instantiate(tilePrefab[randomIndex], new Vector3(i * offsetX, 0, j + realOffsetZ), Quaternion.identity);
                 tile.transform.parent = map.transform;
+                tile.transform.localRotation = Quaternion.Euler(0, 90, 0);
             }
         }
     }
