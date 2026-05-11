@@ -65,8 +65,8 @@ MonoBehaviour:
       - rid: 7314218772629028873
       - rid: 7314218772629028874
       - rid: 7314218772629028875
-      - rid: 930126627000549380
-      - rid: 930126627000549381
+      - rid: 6659082485636268036
+      - rid: 6659082485636268037
     m_RuntimeSettings:
       m_List: []
   m_AssetVersion: 10
@@ -99,14 +99,14 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 930126627000549380
+    - rid: 6659082485636268036
       type: {class: UniversalRenderPipelineRuntimeTerrainShaders, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
       data:
         m_Version: 0
         m_TerrainDetailLit: {fileID: 4800000, guid: f6783ab646d374f94b199774402a5144, type: 3}
         m_TerrainDetailGrassBillboard: {fileID: 4800000, guid: 29868e73b638e48ca99a19ea58c48d90, type: 3}
         m_TerrainDetailGrass: {fileID: 4800000, guid: e507fdfead5ca47e8b9a768b51c291a1, type: 3}
-    - rid: 930126627000549381
+    - rid: 6659082485636268037
       type: {class: URPTerrainShaderSetting, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
       data:
         m_Version: 0
