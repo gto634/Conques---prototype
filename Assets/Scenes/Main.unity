@@ -828,13 +828,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GenerateMap
   map: {fileID: 643802448}
   tilePrefab:
-  - {fileID: 1101235057217803116, guid: 4e6bd1a00ada068439f642a25598556b, type: 3}
-  - {fileID: 2627421474874785680, guid: a30d71f3b09cbd845a13a84a4ef274d4, type: 3}
-  - {fileID: 395845769589989412, guid: a4165e75f5b75984591a0205cc670693, type: 3}
-  - {fileID: 3902794440213495891, guid: 27e328e70bb6ccb48a684ada8c611e5d, type: 3}
-  - {fileID: 2238569169719782677, guid: ad6c0e0da0da99a43b6cc4f2f3e958ca, type: 3}
-  - {fileID: 8450366485872560733, guid: b606266d0be579d44bae597f817e340f, type: 3}
-  - {fileID: 4622057425859653965, guid: d491be879c0e2f548844b48667ec2611, type: 3}
+  - {fileID: 7348097388325356749, guid: 45b3939d9ba2c894d9289fcbd95efdb5, type: 3}
+  - {fileID: 2203102268215770142, guid: cfcdfaa62ea24784997676dc59e656af, type: 3}
+  - {fileID: 3733111836437567880, guid: 58a1f0380ad8c5449a3110a374724cd6, type: 3}
+  - {fileID: 1047655553063969569, guid: c6c07c02106da064eb2fab5c9fc53be9, type: 3}
+  - {fileID: 7384794719884305220, guid: 9bbbd2bb681d0204999d5c4b60e576ab, type: 3}
+  - {fileID: 3305342492584989698, guid: 4f4437f7a1bfeda43bc2ad1e50f50ab2, type: 3}
   offsetX: 0.865
   offsetZ: 0.5
 --- !u!1 &1559627817
