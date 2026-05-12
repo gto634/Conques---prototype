@@ -887,7 +887,12 @@ MonoBehaviour:
   - {fileID: 2108095278}
   - {fileID: 1022229003}
   currentPosition: 0
-  map: {fileID: 643802448}
+  zoomSpeed: 5
+  zoomMax: 20
+  grabSensitivity: 1.5
+  pitchMin: -60
+  pitchMax: 60
+  minHeight: 1
 --- !u!1 &1695504905
 GameObject:
   m_ObjectHideFlags: 0
