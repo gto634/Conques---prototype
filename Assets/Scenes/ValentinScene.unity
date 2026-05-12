@@ -828,9 +828,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GenerateMap
   map: {fileID: 643802448}
   tilePrefab:
-  - {fileID: 1101235057217803116, guid: 4e6bd1a00ada068439f642a25598556b, type: 3}
-  - {fileID: 2627421474874785680, guid: a30d71f3b09cbd845a13a84a4ef274d4, type: 3}
-  offsetX: 1
+  - {fileID: 7348097388325356749, guid: 45b3939d9ba2c894d9289fcbd95efdb5, type: 3}
+  - {fileID: 2203102268215770142, guid: cfcdfaa62ea24784997676dc59e656af, type: 3}
+  - {fileID: 3733111836437567880, guid: 58a1f0380ad8c5449a3110a374724cd6, type: 3}
+  - {fileID: 1047655553063969569, guid: c6c07c02106da064eb2fab5c9fc53be9, type: 3}
+  - {fileID: 7384794719884305220, guid: 9bbbd2bb681d0204999d5c4b60e576ab, type: 3}
+  - {fileID: 3305342492584989698, guid: 4f4437f7a1bfeda43bc2ad1e50f50ab2, type: 3}
+  - {fileID: 8936797880326399929, guid: 001f9896db905824f98523f96a8dc520, type: 3}
+  offsetX: 0.865
   offsetZ: 0.5
 --- !u!1 &1559627817
 GameObject:

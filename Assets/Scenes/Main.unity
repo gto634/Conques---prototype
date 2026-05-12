@@ -834,6 +834,7 @@ MonoBehaviour:
   - {fileID: 1047655553063969569, guid: c6c07c02106da064eb2fab5c9fc53be9, type: 3}
   - {fileID: 7384794719884305220, guid: 9bbbd2bb681d0204999d5c4b60e576ab, type: 3}
   - {fileID: 3305342492584989698, guid: 4f4437f7a1bfeda43bc2ad1e50f50ab2, type: 3}
+  - {fileID: 8936797880326399929, guid: 001f9896db905824f98523f96a8dc520, type: 3}
   offsetX: 0.865
   offsetZ: 0.5
 --- !u!1 &1559627817
