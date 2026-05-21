@@ -6,6 +6,10 @@ public class GenerateMap : MonoBehaviour
     public GameObject map;
     public List<GameObject> tilePrefab;
 
+    [Header("Map size")]
+    public int XSize = 15;
+    public int YSize = 15;
+
     public float offsetX = 0.5f;
     public float offsetZ = 0.5f;    
 
@@ -13,7 +17,7 @@ public class GenerateMap : MonoBehaviour
     {
         float realOffsetZ = 0;
 
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < XSize; i++)
         {
             if(i % 2 == 0)
             {
@@ -24,7 +28,7 @@ public class GenerateMap : MonoBehaviour
                 realOffsetZ = 0f;
             }
 
-            for (int j = 0; j < 15; j++)
+            for (int j = 0; j < YSize; j++)
             {
                 int randomIndex = Random.Range(0, tilePrefab.Count);
                 GameObject tile = Instantiate(tilePrefab[randomIndex], new Vector3(i * offsetX, 0, j + realOffsetZ), Quaternion.identity);
