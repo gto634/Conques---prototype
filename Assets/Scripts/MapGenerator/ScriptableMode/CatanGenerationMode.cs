@@ -17,7 +17,7 @@ public class CatanGenerationMode : MapGenerationMode
 
         for (int i = 0; i < layers; i++)
         {
-            List<HexaCord> freeCords = generator.nodeGrid.GetFreeCords().ToList<HexaCord>();
+            List<HexaCord> freeCords = generator.nodeGrid.GetFreeTileCords().ToList<HexaCord>();
 
             for (int j = 0; j < freeCords.Count; j++)
             {
@@ -32,9 +32,12 @@ public class CatanGenerationMode : MapGenerationMode
 
                 HexaCord cord = freeCords[j];
                 int prefabIndex = tilePool[tilePool.Count - 1];
+   
                 tilePool.RemoveAt(tilePool.Count - 1);
-                generator.InstanciateTile(cord, prefabIndex);
+                generator.InstanciateTile(cord, generator.tiles[prefabIndex].prefab);
             }
         }
+
+        generator.InstanciateWaterBorder();
     }
 }

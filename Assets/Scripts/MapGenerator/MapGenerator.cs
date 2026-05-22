@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -11,8 +12,13 @@ public class MapGenerator : MonoBehaviour
     public MapGenerationMode generationMode;
 
     public List<TileEntry> tiles;
+    public GameObject waterTile;
 
-    private float tileOffset;
+    public List<PortEntry> ports;
+
+    public static float tileOffset;
+    public static float tileMargin;
+    public static float worldY;
 
     private static readonly Vector3[] tileRotations =
     {
@@ -36,25 +42,66 @@ public class MapGenerator : MonoBehaviour
 
         Renderer renderer = tiles[0].prefab.GetComponentInChildren<Renderer>();
         Vector3 size = renderer.bounds.size;
-        tileOffset = Mathf.Max(size.x,size.z) * 0.5f;
-       }
+        MapGenerator.tileOffset = Mathf.Max(size.x,size.z) * 0.5f;
+        MapGenerator.worldY = transform.position.y;
+        tileMargin = 0.1f;
+    }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) {
+        if (nodeGrid == null || nodeGrid.tileGrid == null)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.Space)) 
+        {
             generationMode.Generate(this);
+            nodeGrid.allCorners.ForEach((corner) => { corner.UpdatePosition(); });
+            nodeGrid.allEdges.ForEach((edge) => { edge.UpdatePosition(); });
         } 
     }
 
-    public void InstanciateTile(HexaCord cord, int prefabIndex)
+    void OnDrawGizmos()
     {
-        MapNode node = nodeGrid.CreateNewNode(cord);
-        Vector3 position = HexaToWorld(node.hexaCord);
+        if (nodeGrid == null || nodeGrid.tileGrid == null)
+            return;
 
-        GameObject firstTile = Instantiate(tiles[prefabIndex].prefab, position, Quaternion.identity, map.transform);
+        Gizmos.color = Color.red;
+
+        foreach (TileNode node in nodeGrid.tileGrid.Values)
+        {
+            for (int i = 0; i < node.corners.Count; i++)
+            {
+                CornerNode corner = node.corners[i];
+                Gizmos.DrawSphere(corner.worldPosition, 0.15f);
+            }
+
+            for (int i = 0; i < node.edges.Count; i++)
+            {
+                EdgeNode edge = node.edges[i];
+                Gizmos.DrawSphere(edge.worldPosition, 0.15f);
+            }
+        }
+    }
+
+    public void InstanciateTile(HexaCord cord, GameObject prefab)
+    {
+        TileNode node = nodeGrid.CreateNewNode(cord);
+        
+        Vector3 position = node.worldPosition;
+
+        GameObject firstTile = Instantiate(prefab, position, Quaternion.identity, map.transform);
         ApplyTileRotation(firstTile);
     }
 
+    public void InstanciateWaterBorder()
+    {
+        List<HexaCord> freeCords = nodeGrid.GetFreeTileCords().ToList<HexaCord>();
+        for (int i = 0; i < freeCords.Count; i++)
+        {
+            HexaCord cord = freeCords[i];
+            InstanciateTile(cord, waterTile);
+        }
+    }
     public void ResetMap()
     {
         Destroy(map);
@@ -79,16 +126,6 @@ public class MapGenerator : MonoBehaviour
 
         List<int> shuffledTilePool = tilePool.OrderBy(x => Random.value).ToList();
         return shuffledTilePool;
-    }
-
-    public Vector3 HexaToWorld(HexaCord hex)
-    {
-        float size = tileOffset;
-
-        float worldX = size * (1.5f * hex.x);
-        float worldZ = size * (Mathf.Sqrt(3f) * (hex.z + hex.x * 0.5f));
-
-        return new Vector3(worldX, transform.position.y, worldZ);
     }
 
     public void ApplyTileRotation(GameObject tile)
