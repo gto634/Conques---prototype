@@ -3,36 +3,30 @@ using UnityEngine.InputSystem;
 
 public interface BaseState
 {
-    public virtual void Enter() {}
-
-    public virtual void Execute() {}
-
-    public virtual void Exit() {}
-
+    void Enter();
+    void Execute();
+    void Exit();  
 }
 
-public class StateMachine : MonoBehaviour
+public class StateMachine
 {
-    public static BaseState CurrentState;
+    public BaseState CurrentState { get; private set; }
 
-    private void Awake()
+    public void Initialize(BaseState initialState)
     {
-    }
-    void Start()
-    {
-        CurrentState = new TestState();
-        CurrentState.Enter();
+        CurrentState = initialState;
+        CurrentState?.Enter();
     }
 
-    void Update()
+    public void Update()
     {
-        CurrentState.Execute(); 
+       CurrentState?.Execute(); 
     }
 
-    public static void ChangeState(BaseState NewState)
+    public void ChangeState(BaseState NewState)
     {
-        CurrentState.Exit();
+        CurrentState?.Exit();
         CurrentState = NewState;
-        CurrentState.Enter();
+        CurrentState?.Enter();
     }
 }

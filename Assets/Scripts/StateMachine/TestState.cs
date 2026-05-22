@@ -1,5 +1,5 @@
 using UnityEngine;
-
+/*
 public class TestState : BaseState
 {
     public void Enter()
@@ -42,5 +42,5 @@ public class TestState2 : BaseState
     {
         Debug.Log("Exit2");
     }
-}
+}*/
 

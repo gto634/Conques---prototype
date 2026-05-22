@@ -729,9 +729,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 996392572}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 947e695c5ceb58a4ebd9664393aa253b, type: 3}
+  m_Script: {fileID: 11500000, guid: 6eda3877aa1b50d4089ce758a133212a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StateMachine
+  m_EditorClassIdentifier: Assembly-CSharp::GameManagerScript
+  mapContainer: {fileID: 643802448}
+  tilePrefabs:
+  - {fileID: 7348097388325356749, guid: 45b3939d9ba2c894d9289fcbd95efdb5, type: 3}
+  - {fileID: 2203102268215770142, guid: cfcdfaa62ea24784997676dc59e656af, type: 3}
+  - {fileID: 3733111836437567880, guid: 58a1f0380ad8c5449a3110a374724cd6, type: 3}
+  - {fileID: 1047655553063969569, guid: c6c07c02106da064eb2fab5c9fc53be9, type: 3}
+  - {fileID: 7384794719884305220, guid: 9bbbd2bb681d0204999d5c4b60e576ab, type: 3}
+  - {fileID: 3305342492584989698, guid: 4f4437f7a1bfeda43bc2ad1e50f50ab2, type: 3}
+  - {fileID: 8936797880326399929, guid: 001f9896db905824f98523f96a8dc520, type: 3}
+  xSize: 15
+  ySize: 15
+  offsetX: 0.865
+  offsetZ: 0.5
 --- !u!1 &1022229002
 GameObject:
   m_ObjectHideFlags: 0
@@ -804,7 +817,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1146108996}
-  - component: {fileID: 1146108997}
   m_Layer: 0
   m_Name: Generation Map
   m_TagString: Untagged
@@ -827,31 +839,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 712453392}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1146108997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1146108995}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 815f104db48f59e47bf98f33489d89ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GenerateMap
-  map: {fileID: 643802448}
-  tilePrefab:
-  - {fileID: 7348097388325356749, guid: 45b3939d9ba2c894d9289fcbd95efdb5, type: 3}
-  - {fileID: 2203102268215770142, guid: cfcdfaa62ea24784997676dc59e656af, type: 3}
-  - {fileID: 3733111836437567880, guid: 58a1f0380ad8c5449a3110a374724cd6, type: 3}
-  - {fileID: 1047655553063969569, guid: c6c07c02106da064eb2fab5c9fc53be9, type: 3}
-  - {fileID: 7384794719884305220, guid: 9bbbd2bb681d0204999d5c4b60e576ab, type: 3}
-  - {fileID: 3305342492584989698, guid: 4f4437f7a1bfeda43bc2ad1e50f50ab2, type: 3}
-  - {fileID: 8936797880326399929, guid: 001f9896db905824f98523f96a8dc520, type: 3}
-  XSize: 15
-  YSize: 15
-  offsetX: 0.865
-  offsetZ: 0.5
 --- !u!1 &1559627817
 GameObject:
   m_ObjectHideFlags: 0
