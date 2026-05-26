@@ -14,6 +14,8 @@ public class CatanGenerationMode : MapGenerationMode
         generator.ResetMap();
 
         List<int> tilePool = new List<int>();
+        int baseTilePoolSize = 1;
+        int tilePoolCreated = 0;
 
         for (int i = 0; i < layers; i++)
         {
@@ -25,6 +27,8 @@ public class CatanGenerationMode : MapGenerationMode
                 if (tilePool.Count == 0)
                 {
                     tilePool = generator.GetTilePool(1f);
+                    baseTilePoolSize = tilePool.Count;
+                    tilePoolCreated++;
 
                     if (tilePool.Count == 0)
                         return;
@@ -34,10 +38,11 @@ public class CatanGenerationMode : MapGenerationMode
                 int prefabIndex = tilePool[tilePool.Count - 1];
    
                 tilePool.RemoveAt(tilePool.Count - 1);
-                generator.InstanciateTile(cord, generator.tiles[prefabIndex].prefab);
+                generator.InstanciateTile(cord, generator.tiles[prefabIndex]);
             }
         }
 
         generator.InstanciateWaterBorder();
+        generator.DispatchPorts((float) (tilePoolCreated + (tilePool.Count / baseTilePoolSize)));
     }
 }

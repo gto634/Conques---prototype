@@ -32,10 +32,12 @@ public class RandomGenerationMode : MapGenerationMode
             {
                 HexaCord cord = generator.nodeGrid.GetRandomFreeTileCord();
                 int prefabIndex = tilePool[i];
-                generator.InstanciateTile(cord, generator.tiles[prefabIndex].prefab);
+                TileEntry tile = generator.tiles[prefabIndex];
+                generator.InstanciateTile(cord, tile);
             }
         }
 
         generator.InstanciateWaterBorder();
+        generator.DispatchPorts(mapSizeMultiplicator);
     }
 }

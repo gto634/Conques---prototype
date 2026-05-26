@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.UIElements;
+using static UnityEngine.RectTransform;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -12,9 +15,12 @@ public class MapGenerator : MonoBehaviour
     public MapGenerationMode generationMode;
 
     public List<TileEntry> tiles;
-    public GameObject waterTile;
+    private int waterIndex = -1;
 
     public List<PortEntry> ports;
+
+    public List<MapNumbersEntry> mapNumbers;
+    public Dictionary<int, List<int>> bucketsNumbers = new Dictionary<int, List<int>>();
 
     public static float tileOffset;
     public static float tileMargin;
@@ -42,9 +48,19 @@ public class MapGenerator : MonoBehaviour
 
         Renderer renderer = tiles[0].prefab.GetComponentInChildren<Renderer>();
         Vector3 size = renderer.bounds.size;
-        MapGenerator.tileOffset = Mathf.Max(size.x,size.z) * 0.5f;
+        MapGenerator.tileOffset = Mathf.Max(size.x, size.z) * 0.5f;
         MapGenerator.worldY = transform.position.y;
-        tileMargin = 0.1f;
+        MapGenerator.tileMargin = 0.1f; // meh
+
+        for (int i = 0; i < tiles.Count; i++)
+        {
+            TileEntry tile = tiles[i];
+            if(tile.isWater)
+            {
+                waterIndex = i;
+                break;
+            }
+        }
     }
 
     void Update()
@@ -57,6 +73,13 @@ public class MapGenerator : MonoBehaviour
             generationMode.Generate(this);
             nodeGrid.allCorners.ForEach((corner) => { corner.UpdatePosition(); });
             nodeGrid.allEdges.ForEach((edge) => { edge.UpdatePosition(); });
+            
+            List<TileNode> t = nodeGrid.tileGrid.Values.ToList<TileNode>();
+            for (int i = 0; i < nodeGrid.tileGrid.Count; i++)
+            {
+                TileNode tile = t[i];
+                Debug.Log(tile.tileValue);
+            }
         } 
     }
 
@@ -65,43 +88,164 @@ public class MapGenerator : MonoBehaviour
         if (nodeGrid == null || nodeGrid.tileGrid == null)
             return;
 
-        Gizmos.color = Color.red;
-
         foreach (TileNode node in nodeGrid.tileGrid.Values)
         {
             for (int i = 0; i < node.corners.Count; i++)
             {
                 CornerNode corner = node.corners[i];
-                Gizmos.DrawSphere(corner.worldPosition, 0.15f);
+                corner.DrawGizmo();
             }
 
             for (int i = 0; i < node.edges.Count; i++)
             {
                 EdgeNode edge = node.edges[i];
-                Gizmos.DrawSphere(edge.worldPosition, 0.15f);
+                edge.DrawGizmo();
             }
         }
     }
 
-    public void InstanciateTile(HexaCord cord, GameObject prefab)
+    public void InstanciateTile(HexaCord cord, TileEntry tileEntry)
     {
-        TileNode node = nodeGrid.CreateNewNode(cord);
-        
+        TileNode node = nodeGrid.CreateNewNode(cord, tileEntry.isWater, tileEntry.hasNumber);
+        AssignNumbersToTile(node);
+
         Vector3 position = node.worldPosition;
 
-        GameObject firstTile = Instantiate(prefab, position, Quaternion.identity, map.transform);
-        ApplyTileRotation(firstTile);
+        GameObject tile = Instantiate(tileEntry.prefab, position, Quaternion.identity, map.transform);
+        ApplyTileRotation(tile);
     }
 
     public void InstanciateWaterBorder()
     {
+        if (waterIndex == -1)
+            return;
+
         List<HexaCord> freeCords = nodeGrid.GetFreeTileCords().ToList<HexaCord>();
         for (int i = 0; i < freeCords.Count; i++)
         {
             HexaCord cord = freeCords[i];
-            InstanciateTile(cord, waterTile);
+            InstanciateTile(cord, tiles[waterIndex]);
         }
     }
+
+    public void AssignNumbersToTile(TileNode tile)
+    {
+        if (bucketsNumbers.Count == 0)
+            RefreshBucketNumber();
+
+        int maxBucket = 6;
+        int maxCornerOddsTarget = 12;
+
+        for (int i = 0; i < tile.corners.Count; i++)
+        {
+            CornerNode corner = tile.corners[i];
+            int cornerOdds = corner.GetTilesOdds();
+            maxBucket = Mathf.Min(maxBucket, maxCornerOddsTarget - cornerOdds);
+        }
+        maxBucket = Mathf.Max(1, maxBucket);   
+
+        int selectedBucket = -1;
+        int startBucket = Random.Range(1, maxBucket + 1);
+
+        for (int i = 0; i < maxBucket; i++)
+        {
+            int bucketIndex = (startBucket + i - 1) % maxBucket + 1;
+            if (bucketsNumbers.TryGetValue(bucketIndex, out List<int> numbers))
+            {
+                if (numbers.Count > 0)
+                {
+                    selectedBucket = bucketIndex;
+                    break;
+                }
+            }
+           
+        }
+
+        if (selectedBucket == -1)
+        {
+            int totalBuckets = bucketsNumbers.Count - 1; 
+            if (totalBuckets >= 1)
+            {
+                int startBig = Random.Range(1, totalBuckets + 1);
+                for (int i = 0; i < totalBuckets; i++)
+                {
+                    int bucketIndex = (startBig + i - 1) % totalBuckets + 1;
+                    if (bucketsNumbers[bucketIndex].Count > 0)
+                    {
+                        selectedBucket = bucketIndex;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (selectedBucket == -1)
+        {
+            Debug.LogError("Aucun bucket (même gros) ne contient de nombre !");
+            return;
+        }
+
+        tile.tileValue = bucketsNumbers[selectedBucket][bucketsNumbers[selectedBucket].Count - 1];
+        bucketsNumbers[selectedBucket].RemoveAt(bucketsNumbers[selectedBucket].Count - 1);
+    }
+
+    public void DispatchPorts(float sizeScaling)
+    {
+        List<int> portPool = GetPortPool(sizeScaling);
+
+        List<TileNode> nodes = nodeGrid.tileGrid.Values.ToList<TileNode>();
+        for (int i = 0; i < portPool.Count; i++)
+        {
+            int portIndex = portPool[i];
+
+            int preSelectionSize = nodes.Count;
+            for (int j = 0; j < preSelectionSize; j++)
+            {
+                int index = Random.Range(0, nodes.Count - 1);
+                TileNode tile = nodes[index];
+                nodes.RemoveAt(index);
+                if (CanDispatchPort(tile, out EdgeNode edge))
+                {
+                    InstanciatePortEdge(edge,tile,ports[portIndex].prefab);
+                    break;
+                }
+            }
+        }
+    }
+
+    public bool CanDispatchPort(TileNode tile, out EdgeNode edge)
+    {
+        edge = null;
+
+        if (tile.isWater)
+            return false;
+
+        List<EdgeNode> validEdges = new List<EdgeNode>();
+        foreach (EdgeNode testEdge in tile.edges)
+        {
+            if (testEdge.IsCoastal() && testEdge.HasNoCornerPorts())
+            {
+                validEdges.Add(testEdge);
+            }
+        }
+
+        if (validEdges.Count == 0)
+            return false;
+
+        int randomIndex = Random.Range(0, validEdges.Count);
+        edge = validEdges[randomIndex];
+        return true;
+    }
+
+    public void InstanciatePortEdge(EdgeNode edge, TileNode tile, GameObject prefab)
+    {
+        edge.cornerA.hasPort = true;
+        edge.cornerB.hasPort = true;
+        GameObject port1 = Instantiate(prefab, edge.cornerA.worldPosition, Quaternion.identity, map.transform);
+        GameObject port2 = Instantiate(prefab, edge.cornerB.worldPosition, Quaternion.identity, map.transform);
+        // rotate it to look in the opposite direction of the arg tile ?
+    }
+
     public void ResetMap()
     {
         Destroy(map);
@@ -126,6 +270,46 @@ public class MapGenerator : MonoBehaviour
 
         List<int> shuffledTilePool = tilePool.OrderBy(x => Random.value).ToList();
         return shuffledTilePool;
+    }
+
+    public List<int> GetPortPool(float mult)
+    {
+        List<int> portPool = new List<int>();
+
+        for (int prefabIndex = 0; prefabIndex < ports.Count; prefabIndex++)
+        {
+            int poolAmount = (int)Mathf.Ceil(ports[prefabIndex].amount * mult); // why does ceil returns float...
+
+            for (int i = 0; i < poolAmount; i++)
+            {
+                portPool.Add(prefabIndex);
+            }
+        }
+
+        List<int> shuffledPortPool = portPool.OrderBy(x => Random.value).ToList();
+
+        return shuffledPortPool;
+    }
+
+    public void RefreshBucketNumber()
+    {
+        for (int index = 0; index < mapNumbers.Count; index++)
+        {
+            MapNumbersEntry numberEntry = mapNumbers[index];
+            int bucket = numberEntry.GetOdd();
+
+            for (int i = 0; i < numberEntry.amount; i++)
+            {
+                if (!bucketsNumbers.TryGetValue(bucket, out List<int> numbers))
+                {
+                    bucketsNumbers[bucket] = new List<int>();
+                }
+                else
+                {
+                    bucketsNumbers[bucket].Add(numberEntry.value);
+                }
+            }
+        }
     }
 
     public void ApplyTileRotation(GameObject tile)

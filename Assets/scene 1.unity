@@ -246,6 +246,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1071044235
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1071044236}
+  - component: {fileID: 1071044237}
+  m_Layer: 0
+  m_Name: MapBuilder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1071044236
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071044235}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.43765, y: 1.88102, z: -0.5764}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1071044237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071044235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab458209ec96bab4f8eba5e5da499102, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildDetector
+  mapGenerator: {fileID: 1360169672}
+  seuilDistance: 0.1
 --- !u!1 &1360169670
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,33 +340,69 @@ MonoBehaviour:
   generationMode: {fileID: 11400000, guid: 428b2d3c072419f4895e27e7ae52dd18, type: 2}
   tiles:
   - prefab: {fileID: 2873195831088620582, guid: e43280f845a9701488c69b129e96bade, type: 3}
+    isWater: 0
+    hasNumber: 1
     amount: 4
   - prefab: {fileID: 5733130875568267876, guid: 3c0fb784f1d338343a816bb43a5d68d4, type: 3}
+    isWater: 0
+    hasNumber: 1
     amount: 4
   - prefab: {fileID: 3902794440213495891, guid: 27e328e70bb6ccb48a684ada8c611e5d, type: 3}
+    isWater: 0
+    hasNumber: 1
     amount: 4
   - prefab: {fileID: 2238569169719782677, guid: ad6c0e0da0da99a43b6cc4f2f3e958ca, type: 3}
+    isWater: 0
+    hasNumber: 1
     amount: 3
   - prefab: {fileID: 4622057425859653965, guid: d491be879c0e2f548844b48667ec2611, type: 3}
+    isWater: 0
+    hasNumber: 1
     amount: 3
   - prefab: {fileID: 8450366485872560733, guid: b606266d0be579d44bae597f817e340f, type: 3}
+    isWater: 0
+    hasNumber: 0
     amount: 1
   - prefab: {fileID: 3067955601719349702, guid: 79ba98c21ff95f34cab55f79ae0203f8, type: 3}
+    isWater: 1
+    hasNumber: 0
     amount: 0
-  waterTile: {fileID: 3067955601719349702, guid: 79ba98c21ff95f34cab55f79ae0203f8, type: 3}
   ports:
-  - prefab: {fileID: 0}
+  - prefab: {fileID: 6405258940559056237, guid: fa9518a47a0ab25418113a86573dcc24, type: 3}
     amount: 1
-  - prefab: {fileID: 0}
+  - prefab: {fileID: 6405258940559056237, guid: fa9518a47a0ab25418113a86573dcc24, type: 3}
     amount: 1
-  - prefab: {fileID: 0}
+  - prefab: {fileID: 6405258940559056237, guid: fa9518a47a0ab25418113a86573dcc24, type: 3}
     amount: 1
-  - prefab: {fileID: 0}
+  - prefab: {fileID: 6405258940559056237, guid: fa9518a47a0ab25418113a86573dcc24, type: 3}
     amount: 1
-  - prefab: {fileID: 0}
+  - prefab: {fileID: 6405258940559056237, guid: fa9518a47a0ab25418113a86573dcc24, type: 3}
     amount: 1
-  - prefab: {fileID: 0}
+  - prefab: {fileID: 6405258940559056237, guid: fa9518a47a0ab25418113a86573dcc24, type: 3}
     amount: 3
+  mapNumbers:
+  - value: 2
+    amount: 1
+  - value: 3
+    amount: 2
+  - value: 4
+    amount: 2
+  - value: 5
+    amount: 2
+  - value: 6
+    amount: 2
+  - value: 7
+    amount: 0
+  - value: 8
+    amount: 2
+  - value: 9
+    amount: 2
+  - value: 10
+    amount: 2
+  - value: 11
+    amount: 2
+  - value: 12
+    amount: 1
 --- !u!1 &2008656793
 GameObject:
   m_ObjectHideFlags: 0
@@ -545,3 +627,4 @@ SceneRoots:
   - {fileID: 751636}
   - {fileID: 2033963488}
   - {fileID: 1360169671}
+  - {fileID: 1071044236}

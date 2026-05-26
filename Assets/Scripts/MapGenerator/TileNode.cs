@@ -16,6 +16,8 @@ public class TileNode
     public List<EdgeNode> edges = new List<EdgeNode>(); 
     public List<CornerNode> corners = new List<CornerNode>();
 
+    public int tileValue = -1;
+
     public Vector3 UpdatePosition()
     {
         if (!positionDirty)

@@ -4,5 +4,7 @@ using UnityEngine;
 public class TileEntry
 {
     public GameObject prefab;
+    public bool isWater;
+    public bool hasNumber;
     public int amount;
 }

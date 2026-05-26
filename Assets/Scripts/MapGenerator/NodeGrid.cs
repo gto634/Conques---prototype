@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NodeGrid
@@ -13,6 +14,10 @@ public class NodeGrid
     {
         freeTileCord.Clear();
         tileGrid.Clear();
+        allCorners.Clear();
+        allEdges.Clear();
+        edgeMap.Clear();
+        cornerMap.Clear();
         freeTileCord.Add(new HexaCord(0, 0, 0));
     }
 
@@ -33,12 +38,13 @@ public class NodeGrid
         throw new System.Exception("No free tile cords");
     }
 
-    public TileNode CreateNewNode(HexaCord cord)
+    public TileNode CreateNewNode(HexaCord cord, bool isWater, bool hasNumber)
     {
         TileNode node = new TileNode();
         node.hexaCord = cord;
         tileGrid[cord] = node;
         freeTileCord.Remove(cord);
+        node.isWater = isWater;
 
         for (int i = 0; i < HexaCord.directions.Length; i++)
         {
@@ -102,12 +108,9 @@ public class NodeGrid
                 allEdges.Add(edge);
             }
 
-            Vector3 edgeDir = (b.worldPosition - a.worldPosition).normalized;
-            Vector3 toCenter = tile.worldPosition - edge.worldPosition;
-            float cross = Vector3.Cross(edgeDir, toCenter).y;
-            if (cross > 0)
+            if (edge.tileA == null)
                 edge.tileA = tile;
-            else
+            else if (edge.tileB == null)
                 edge.tileB = tile;
 
             if (!tile.edges.Contains(edge))
