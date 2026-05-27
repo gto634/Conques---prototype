@@ -124,7 +124,7 @@ public class NodeGrid
 
     private Vector3 GetHexCorner(Vector3 center, int cornerIndex)
     {
-        float radius = MapGenerator.tileOffset + MapGenerator.tileMargin;
+        float radius = TileNode.tileOffset + TileNode.tileMargin;
         float angleDeg = 60f * cornerIndex;
         float angleRad = Mathf.Deg2Rad * angleDeg;
         float x = center.x + radius * Mathf.Cos(angleRad);
