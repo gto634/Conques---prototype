@@ -45,6 +45,10 @@ public class EdgeNode
         return (!cornerA.hasPort && !cornerB.hasPort);
     }
 
+    public bool HasNoCornerNearPorts()
+    {
+        return !cornerA.HasNeighborPorts() && !cornerB.HasNeighborPorts();
+    }
 
     public void DrawGizmo()
     {

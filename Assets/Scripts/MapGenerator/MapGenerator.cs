@@ -73,13 +73,6 @@ public class MapGenerator : MonoBehaviour
             generationMode.Generate(this);
             nodeGrid.allCorners.ForEach((corner) => { corner.UpdatePosition(); });
             nodeGrid.allEdges.ForEach((edge) => { edge.UpdatePosition(); });
-            
-            List<TileNode> t = nodeGrid.tileGrid.Values.ToList<TileNode>();
-            for (int i = 0; i < nodeGrid.tileGrid.Count; i++)
-            {
-                TileNode tile = t[i];
-                Debug.Log(tile.tileValue);
-            }
         } 
     }
 
@@ -107,11 +100,16 @@ public class MapGenerator : MonoBehaviour
     public void InstanciateTile(HexaCord cord, TileEntry tileEntry)
     {
         TileNode node = nodeGrid.CreateNewNode(cord, tileEntry.isWater, tileEntry.hasNumber);
-        AssignNumbersToTile(node);
+        if (tileEntry.hasNumber)
+        {
+            AssignNumbersToTile(node);
+        }
 
         Vector3 position = node.worldPosition;
 
         GameObject tile = Instantiate(tileEntry.prefab, position, Quaternion.identity, map.transform);
+        TileBehavior behavior = tile.GetComponent<TileBehavior>();
+        behavior.node = node;
         ApplyTileRotation(tile);
     }
 
@@ -128,21 +126,26 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    public void AssignNumbersToTile(TileNode tile)
+    public void AssignNumbersToTile(TileNode tile) // something may be wrong here
     {
         if (bucketsNumbers.Count == 0)
             RefreshBucketNumber();
 
         int maxBucket = 6;
         int maxCornerOddsTarget = 12;
-
+        int maxOddToAvoidRepetition = 5;
         for (int i = 0; i < tile.corners.Count; i++)
         {
             CornerNode corner = tile.corners[i];
             int cornerOdds = corner.GetTilesOdds();
+            int cornerMaxOdd = corner.GetTileMaxOdd();
             maxBucket = Mathf.Min(maxBucket, maxCornerOddsTarget - cornerOdds);
+            if (maxOddToAvoidRepetition <= cornerMaxOdd)
+            {
+                Mathf.Min(maxOddToAvoidRepetition - 1, maxBucket);
+            }
         }
-        maxBucket = Mathf.Max(1, maxBucket);   
+        maxBucket = Mathf.Max(1, maxBucket);
 
         int selectedBucket = -1;
         int startBucket = Random.Range(1, maxBucket + 1);
@@ -150,43 +153,36 @@ public class MapGenerator : MonoBehaviour
         for (int i = 0; i < maxBucket; i++)
         {
             int bucketIndex = (startBucket + i - 1) % maxBucket + 1;
-            if (bucketsNumbers.TryGetValue(bucketIndex, out List<int> numbers))
+            if (bucketsNumbers.TryGetValue(bucketIndex, out List<int> numbers) && numbers.Count > 0)
             {
-                if (numbers.Count > 0)
-                {
-                    selectedBucket = bucketIndex;
-                    break;
-                }
+                selectedBucket = bucketIndex;
+                break;
             }
-           
         }
 
         if (selectedBucket == -1)
         {
-            int totalBuckets = bucketsNumbers.Count - 1; 
-            if (totalBuckets >= 1)
+            var existingKeys = bucketsNumbers.Keys.OrderBy(k => k).ToList();
+            if (existingKeys.Count > 0)
             {
-                int startBig = Random.Range(1, totalBuckets + 1);
-                for (int i = 0; i < totalBuckets; i++)
+                int startIndex = Random.Range(0, existingKeys.Count);
+                for (int i = 0; i < existingKeys.Count; i++)
                 {
-                    int bucketIndex = (startBig + i - 1) % totalBuckets + 1;
-                    if (bucketsNumbers[bucketIndex].Count > 0)
+                    int key = existingKeys[(startIndex + i) % existingKeys.Count];
+                    if (bucketsNumbers[key].Count > 0)
                     {
-                        selectedBucket = bucketIndex;
+                        selectedBucket = key;
                         break;
                     }
                 }
             }
         }
 
-        if (selectedBucket == -1)
-        {
-            Debug.LogError("Aucun bucket (même gros) ne contient de nombre !");
-            return;
-        }
-
-        tile.tileValue = bucketsNumbers[selectedBucket][bucketsNumbers[selectedBucket].Count - 1];
-        bucketsNumbers[selectedBucket].RemoveAt(bucketsNumbers[selectedBucket].Count - 1);
+        var selectedList = bucketsNumbers[selectedBucket];
+        tile.tileValue = selectedList[selectedList.Count - 1];
+        selectedList.RemoveAt(selectedList.Count - 1);
+        if (selectedList.Count == 0)
+            bucketsNumbers.Remove(selectedBucket);
     }
 
     public void DispatchPorts(float sizeScaling)
@@ -223,7 +219,7 @@ public class MapGenerator : MonoBehaviour
         List<EdgeNode> validEdges = new List<EdgeNode>();
         foreach (EdgeNode testEdge in tile.edges)
         {
-            if (testEdge.IsCoastal() && testEdge.HasNoCornerPorts())
+            if (testEdge.IsCoastal() && testEdge.HasNoCornerPorts() && testEdge.HasNoCornerNearPorts())
             {
                 validEdges.Add(testEdge);
             }
@@ -250,7 +246,7 @@ public class MapGenerator : MonoBehaviour
     {
         Destroy(map);
         map = new GameObject("Map");
-
+        bucketsNumbers.Clear();
         nodeGrid.Reset();
     }
 
@@ -300,12 +296,13 @@ public class MapGenerator : MonoBehaviour
 
             for (int i = 0; i < numberEntry.amount; i++)
             {
-                if (!bucketsNumbers.TryGetValue(bucket, out List<int> numbers))
+                if (bucketsNumbers.TryGetValue(bucket, out List<int> numbers))
                 {
-                    bucketsNumbers[bucket] = new List<int>();
+                    numbers.Add(numberEntry.value);
                 }
                 else
                 {
+                    bucketsNumbers[bucket] = new List<int>();
                     bucketsNumbers[bucket].Add(numberEntry.value);
                 }
             }

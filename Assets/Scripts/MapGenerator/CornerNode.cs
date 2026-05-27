@@ -71,4 +71,31 @@ public class CornerNode
         }
         return odds;
     }
+
+    public int GetTileMaxOdd()
+    {
+        int max = 0;
+        for (int i = 0; i < adjacentTiles.Count; i++)
+        {
+            TileNode tile = adjacentTiles[i];
+            if (tile.tileValue != -1)
+            {
+                if (MapNumbersEntry.odds.TryGetValue(tile.tileValue, out int odd))
+                    max = Mathf.Max(max, odd);
+            }
+
+        }
+        return max;
+    }
+
+    public bool HasNeighborPorts()
+    {
+        for (int i = 0; i < edges.Count; i++)
+        {
+            EdgeNode edge = edges[i];
+            if(!edge.HasNoCornerPorts())
+                return true;
+        }
+        return false;
+    }
 }
