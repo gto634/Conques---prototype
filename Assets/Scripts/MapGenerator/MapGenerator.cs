@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UIElements;
 using static UnityEngine.RectTransform;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -22,20 +23,6 @@ public class MapGenerator : MonoBehaviour
     public List<MapNumbersEntry> mapNumbers;
     public Dictionary<int, List<int>> bucketsNumbers = new Dictionary<int, List<int>>();
 
-    public static float tileOffset;
-    public static float tileMargin;
-    public static float worldY;
-
-    private static readonly Vector3[] tileRotations =
-    {
-        new Vector3(0,30,0),
-        new Vector3(0,90,0),
-        new Vector3(0,150,0),
-        new Vector3(0,210,0),
-        new Vector3(0,270,0),
-        new Vector3(0,330,0)
-    };
-
     void Awake()
     {
         map = new GameObject("Map");
@@ -48,9 +35,9 @@ public class MapGenerator : MonoBehaviour
 
         Renderer renderer = tiles[0].prefab.GetComponentInChildren<Renderer>();
         Vector3 size = renderer.bounds.size;
-        MapGenerator.tileOffset = Mathf.Max(size.x, size.z) * 0.5f;
-        MapGenerator.worldY = transform.position.y;
-        MapGenerator.tileMargin = 0.1f; // meh
+        TileNode.tileOffset = Mathf.Max(size.x, size.z) * 0.5f;
+        TileNode.worldY = transform.position.y;
+        TileNode.tileMargin = 0.1f;
 
         for (int i = 0; i < tiles.Count; i++)
         {
@@ -110,7 +97,7 @@ public class MapGenerator : MonoBehaviour
         GameObject tile = Instantiate(tileEntry.prefab, position, Quaternion.identity, map.transform);
         TileBehavior behavior = tile.GetComponent<TileBehavior>();
         behavior.node = node;
-        ApplyTileRotation(tile);
+        TileEntry.ApplyTileRotation(tile);
     }
 
     public void InstanciateWaterBorder()
@@ -307,10 +294,5 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-    }
-
-    public void ApplyTileRotation(GameObject tile)
-    {
-        tile.transform.Rotate(tileRotations[Random.Range(0, tileRotations.Length - 1)]);
     }
 }

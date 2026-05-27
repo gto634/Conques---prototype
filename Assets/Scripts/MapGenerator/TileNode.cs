@@ -18,17 +18,21 @@ public class TileNode
 
     public int tileValue = -1;
 
+    public static float tileOffset;
+    public static float tileMargin;
+    public static float worldY;
+
     public Vector3 UpdatePosition()
     {
         if (!positionDirty)
             return worldPosition;
         positionDirty = false;
 
-        float size = MapGenerator.tileOffset + MapGenerator.tileMargin;
+        float size = tileOffset + tileMargin;
         float worldX = size * (1.5f * hexaCord.x);
         float worldZ = size * (Mathf.Sqrt(3f) * (hexaCord.z + hexaCord.x * 0.5f));
 
-        worldPosition = new Vector3(worldX, MapGenerator.worldY, worldZ);
+        worldPosition = new Vector3(worldX, worldY, worldZ);
 
         return worldPosition;
     }
